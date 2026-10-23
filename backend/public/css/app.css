@@ -1,0 +1,109 @@
+/* Tambahan khusus versi Blade. Gaya utama tetap dari deadlock.css (salinan CSS frontend tim). */
+
+/* Flash / toast */
+.toast-container {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: min(420px, calc(100vw - 32px));
+}
+.toast-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--color-success);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  font-size: 13px;
+  color: var(--text-main);
+}
+.toast-item.error { border-left-color: var(--color-danger); }
+.toast-item.warning { border-left-color: var(--color-warning); }
+.toast-item.info { border-left-color: var(--color-accent); }
+.toast-item button { background: none; border: none; color: var(--text-muted); cursor: pointer; margin-left: auto; }
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 40px 16px;
+  text-align: center;
+}
+.empty-icon { color: var(--text-muted); }
+.empty-title { font-weight: 600; color: var(--text-main); }
+.empty-desc { font-size: 13px; color: var(--text-secondary); }
+
+/* Tabel lebar bisa digeser di layar sempit; kode unit & tombol aksi tidak dipatah. */
+.table-container { overflow-x: auto; }
+.tactical-table .text-mono, .row-actions, .tactical-table td:last-child .btn-primary { white-space: nowrap; }
+
+/* Modal yang dibuka lewat JS kecil di layout */
+.modal-overlay[hidden] { display: none; }
+
+/* Kotak alert umum (info / error) */
+.alert-box {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+}
+.alert-box.info { border-color: var(--border-focus); background: var(--color-accent-dim); color: var(--text-main); }
+.alert-box.danger { border-color: var(--color-danger-border); background: var(--color-danger-bg); color: var(--text-main); }
+
+/* Form */
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.form-grid .span-2 { grid-column: span 2; }
+.form-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 22px;
+}
+.form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+.tag-option input { display: none; }
+.tag-options { display: flex; flex-wrap: wrap; gap: 8px; }
+textarea.input-control { min-height: 90px; resize: vertical; }
+.inline-form { display: inline; }
+.row-actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+a.btn-primary, a.btn-secondary, a.btn-danger { text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.btn-primary[disabled] { opacity: .45; cursor: not-allowed; }
+
+/* Pagination */
+.pagination-bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 14px; font-size: 12.5px; color: var(--text-secondary); flex-wrap: wrap; }
+.pagination-links { display: flex; gap: 6px; flex-wrap: wrap; }
+.pagination-links a, .pagination-links span {
+  padding: 5px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+.pagination-links .current { border-color: var(--color-accent); color: var(--color-accent); }
+.pagination-links .disabled { opacity: .4; }
+
+.page-stack { display: flex; flex-direction: column; gap: 20px; }
+.photo-preview { width: 96px; height: 96px; border-radius: var(--radius-md); object-fit: cover; border: 1px solid var(--border-color); }
+.text-danger { color: var(--color-danger); }
+
+@media (max-width: 768px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .form-grid .span-2 { grid-column: auto; }
+}
+
+@media print {
+  .app-sidebar, .app-topbar, .no-print, .toast-container { display: none !important; }
+}
