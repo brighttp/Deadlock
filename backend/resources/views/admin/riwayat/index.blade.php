@@ -33,7 +33,7 @@
             @if ($loans->isEmpty())
                 <x-empty title="Tidak ada riwayat pada rentang tanggal ini." />
             @else
-                @include('admin.riwayat._tabel', ['tampilPeminjam' => empty($filter['user_id'])])
+                @include('admin.riwayat._tabel', ['tampilPeminjam' => empty($filter['user_id']), 'pakaiKurs' => true])
             @endif
         </div>
         <x-pagination :paginator="$loans" />

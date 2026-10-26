@@ -40,7 +40,7 @@
                                 <td><span class="text-mono">{{ $loan->unit->unit_code }}</span> – {{ $loan->unit->name }}</td>
                                 <td>{{ tanggal($loan->due_date) }}</td>
                                 <td class="text-danger">{{ $loan->hariTerlambat() }} hari</td>
-                                <td style="text-align:right">{{ rupiah($loan->hitungDenda()) }}</td>
+                                <td style="text-align:right">{{ uang($loan->hitungDenda()) }}</td>
                             </tr>
                         @endforeach
                         </tbody>

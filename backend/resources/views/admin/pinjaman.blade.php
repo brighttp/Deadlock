@@ -1,7 +1,7 @@
 <x-layouts.app title="Pusat Peminjaman & Pengembalian">
     <div class="page-stack">
         <x-page-header title="Pinjaman Aktif"
-                       description="Semua unit yang sedang dipinjam. Tarif denda {{ rupiah(config('gudang.denda_per_hari')) }} per hari keterlambatan." />
+                       description="Semua unit yang sedang dipinjam. Tarif denda {{ uang(config('gudang.denda_per_hari')) }} per hari keterlambatan." />
 
         <div class="table-container">
             @if ($loans->isEmpty())
@@ -42,7 +42,7 @@
                                     <div>Unit: <strong>{{ $loan->unit->unit_code }} – {{ $loan->unit->name }}</strong></div>
                                     <div>Peminjam: <strong>{{ $loan->user->name }}</strong></div>
                                     <div>Hari terlambat: <strong>{{ $hari }} hari</strong></div>
-                                    <div>Denda: <strong>{{ rupiah($denda) }}</strong></div>
+                                    <div>Denda: <strong>{{ uang($denda) }}</strong></div>
                                 </x-confirm>
                             </td>
                         </tr>

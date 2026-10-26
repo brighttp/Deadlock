@@ -7,6 +7,7 @@ use App\Models\Loan;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Http;
 use Monolog\Handler\NullHandler;
 use RuntimeException;
 
@@ -36,6 +37,9 @@ abstract class TestCase extends BaseTestCase
 
         // Log alert dari test tidak boleh masuk ke storage/logs/alert-*.log yang dibaca halaman Monitoring.
         config(['logging.channels.alert' => ['driver' => 'monolog', 'handler' => NullHandler::class]]);
+
+        // Test tidak boleh memanggil API sungguhan (misalnya API kurs); request yang tidak di-fake langsung gagal.
+        Http::preventStrayRequests();
     }
 
     protected function buatAdmin(array $attrs = []): User

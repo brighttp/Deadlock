@@ -22,7 +22,9 @@
             <td>{{ tanggal($loan->due_date) }}</td>
             <td>{{ tanggal($loan->return_date) }}</td>
             {{-- Pinjaman aktif: denda berjalan (belum final) sampai dikembalikan. --}}
-            <td style="text-align:right">{{ rupiah($loan->status === 'selesai' ? $loan->fine_amount : $loan->hitungDenda()) }}</td>
+            @php $denda = $loan->status === 'selesai' ? $loan->fine_amount : $loan->hitungDenda(); @endphp
+            {{-- Halaman riwayat memakai mata uang pilihan; cetak/PDF (dokumen resmi) tetap Rupiah. --}}
+            <td style="text-align:right">{{ ($pakaiKurs ?? false) ? uang($denda) : rupiah($denda) }}</td>
             <td>{{ $loan->statusLabel() }}</td>
         </tr>
     @endforeach

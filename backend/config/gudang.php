@@ -49,4 +49,22 @@ return [
         'ulang_menit' => (int) env('ALERT_ULANG_MENIT', 30),
     ],
 
+    /*
+    | Mata uang tampilan (revisi asesor). Data tetap disimpan dalam Rupiah;
+    | konversi hanya saat ditampilkan, memakai kurs harian Bank Sentral Eropa dari API Frankfurter.
+    */
+    'mata_uang' => [
+        'default' => 'IDR',
+        'api_url' => env('KURS_API_URL', 'https://api.frankfurter.dev/v1/latest'),
+        'cache_menit' => (int) env('KURS_CACHE_MENIT', 60),
+        'timeout_detik' => 3,
+        'daftar' => [
+            'IDR' => ['nama' => 'Rupiah', 'simbol' => 'Rp', 'desimal' => 0],
+            'USD' => ['nama' => 'Dolar AS', 'simbol' => '$', 'desimal' => 2],
+            'EUR' => ['nama' => 'Euro', 'simbol' => '€', 'desimal' => 2],
+            'SGD' => ['nama' => 'Dolar Singapura', 'simbol' => 'S$', 'desimal' => 2],
+            'JPY' => ['nama' => 'Yen Jepang', 'simbol' => '¥', 'desimal' => 0],
+        ],
+    ],
+
 ];

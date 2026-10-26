@@ -30,6 +30,6 @@ class LoanController extends Controller
             return back()->with('error', collect($e->errors())->flatten()->first());
         }
 
-        return back()->with('success', 'Pengembalian diproses. Denda: '.rupiah($loan->fine_amount).'.'); // MSG-16
+        return back()->with('success', 'Pengembalian diproses. Denda: '.uang($loan->fine_amount).'.'); // MSG-16
     }
 }

@@ -39,7 +39,7 @@
                                 <x-badge :status="$loan->statusLabel()" />
                                 @if ($loan->isTerlambat())<div class="text-danger" style="font-size:12px">{{ $loan->hariTerlambat() }} hari</div>@endif
                             </td>
-                            <td style="text-align:right">{{ rupiah($loan->hitungDenda()) }}</td>
+                            <td style="text-align:right">{{ uang($loan->hitungDenda()) }}</td>
                         </tr>
                     @endforeach
                     </tbody>

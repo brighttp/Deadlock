@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Http\Requests\Concerns\ProfileRules;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ProfileRequest extends FormRequest
 {
@@ -21,12 +22,18 @@ class ProfileRequest extends FormRequest
 
     public function rules(): array
     {
-        return $this->profileRules();
+        return [
+            ...$this->profileRules(),
+            'currency' => ['required', Rule::in(array_keys(config('gudang.mata_uang.daftar')))],
+        ];
     }
 
     public function messages(): array
     {
-        return $this->profileMessages();
+        return [
+            ...$this->profileMessages(),
+            'currency.in' => 'Mata uang tidak dikenal.', // MSG-22
+        ];
     }
 
     public function attributes(): array

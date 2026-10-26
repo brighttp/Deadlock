@@ -51,6 +51,10 @@ class ProfileService
                 if (array_key_exists('email', $data)) {
                     $user->email = $data['email'];
                 }
+                // Mata uang hanya diubah lewat halaman Profil; form Admin tidak mengirim field ini.
+                if (array_key_exists('currency', $data)) {
+                    $user->currency = $data['currency'];
+                }
                 if (! empty($data['password'])) {
                     $user->password = $data['password'];
                 }
