@@ -24,6 +24,8 @@ class DiskProbe extends AbstractProbe
 
     protected function baca(): Metric
     {
+        // Pengecualian guideline: operator @ dipakai karena fungsi disk_* memunculkan warning
+        // (bukan exception) di sebagian sistem; hasil false sudah ditangani di bawah.
         $total = @disk_total_space(storage_path());
         $bebas = @disk_free_space(storage_path());
 
