@@ -23,4 +23,30 @@ return [
 
     'per_halaman' => 10,                                      // OQ-07
 
+    /*
+    | Pemantauan resource (halaman Monitoring + perintah gudang:pantau).
+    | "batas" = batas atas sebelum aplikasi gagal. Status peringatan/kritis
+    | ditentukan dari persentase terhadap batas tersebut.
+    */
+    'monitoring' => [
+        'peringatan_persen' => 70,
+        'kritis_persen' => 90,
+        'riwayat_maks_sampel' => 288,                         // 24 jam jika dipantau tiap 5 menit
+        'batas' => [
+            'db_latensi_ms' => 1000,
+            'db_ukuran_mb' => (int) env('MONITOR_DB_MAKS_MB', 500),           // kuota database Supabase Free
+            'db_koneksi' => (int) env('MONITOR_DB_MAKS_KONEKSI', 60),         // max_connections Supabase Free (Nano)
+            'foto_mb' => (int) env('MONITOR_FOTO_MAKS_MB', 1024),
+        ],
+    ],
+
+    /*
+    | Alert saat aplikasi bermasalah.
+    | Alert yang sama dikirim ulang tiap "ulang_menit" selama masalah belum tertangani.
+    */
+    'alert' => [
+        'email' => env('ALERT_EMAIL'),                        // kosong = hanya dicatat di storage/logs/alert-*.log
+        'ulang_menit' => (int) env('ALERT_ULANG_MENIT', 30),
+    ],
+
 ];

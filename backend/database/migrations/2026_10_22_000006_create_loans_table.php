@@ -25,10 +25,13 @@ return new class extends Migration
             $table->index(['unit_id', 'status']);
         });
 
-        DB::statement('ALTER TABLE loans ADD CONSTRAINT loans_fine_amount_non_negative CHECK (fine_amount >= 0)');
-        DB::statement('ALTER TABLE loans ADD CONSTRAINT loans_due_date_after_loan_date CHECK (due_date >= loan_date)');
-        DB::statement('ALTER TABLE loans ADD CONSTRAINT loans_return_date_after_loan_date CHECK (return_date IS NULL OR return_date >= loan_date)');
-        DB::statement("ALTER TABLE loans ADD CONSTRAINT loans_status_matches_return_date CHECK ((status = 'aktif' AND return_date IS NULL) OR (status = 'selesai' AND return_date IS NOT NULL))");
+        // SQLite (dipakai test) tidak mendukung ALTER TABLE ADD CONSTRAINT.
+        if (DB::getDriverName() === 'pgsql') {
+            DB::statement('ALTER TABLE loans ADD CONSTRAINT loans_fine_amount_non_negative CHECK (fine_amount >= 0)');
+            DB::statement('ALTER TABLE loans ADD CONSTRAINT loans_due_date_after_loan_date CHECK (due_date >= loan_date)');
+            DB::statement('ALTER TABLE loans ADD CONSTRAINT loans_return_date_after_loan_date CHECK (return_date IS NULL OR return_date >= loan_date)');
+            DB::statement("ALTER TABLE loans ADD CONSTRAINT loans_status_matches_return_date CHECK ((status = 'aktif' AND return_date IS NULL) OR (status = 'selesai' AND return_date IS NOT NULL))");
+        }
 
         // Satu unit hanya boleh punya satu pinjaman aktif (pengaman race condition).
         DB::statement("CREATE UNIQUE INDEX loans_unit_active_unique ON loans (unit_id) WHERE status = 'aktif'");

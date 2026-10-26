@@ -131,6 +131,15 @@ return [
             'handler' => NullHandler::class,
         ],
 
+        // Catatan alert aplikasi (App\Monitoring\AlertService).
+        'alert' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/alert.log'),
+            'level' => 'debug',
+            'days' => 30,
+            'replace_placeholders' => true,
+        ],
+
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],

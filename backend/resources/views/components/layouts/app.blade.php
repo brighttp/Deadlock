@@ -11,6 +11,7 @@
             ['anggota.index', 'Personel Survivor', 'users', 'anggota*'],
             ['pinjaman.index', 'Peminjaman Unit', 'arrow-left-right', 'pinjaman*'],
             ['riwayat.index', 'Riwayat & Rekap', 'history', 'riwayat*'],
+            ['monitoring', 'Monitoring Sistem', 'activity', 'monitoring*'],
         ]
         : [
             ['profil.edit', 'Profil Saya', 'user-check', 'profil*'],

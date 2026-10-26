@@ -23,6 +23,11 @@ return new class extends Migration
 
     public function up(): void
     {
+        // RLS hanya ada di PostgreSQL; dilewati saat test memakai SQLite.
+        if (DB::getDriverName() !== 'pgsql') {
+            return;
+        }
+
         foreach ($this->tables as $table) {
             DB::statement("ALTER TABLE {$table} ENABLE ROW LEVEL SECURITY");
         }
@@ -30,6 +35,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (DB::getDriverName() !== 'pgsql') {
+            return;
+        }
+
         foreach ($this->tables as $table) {
             if (Schema::hasTable($table)) {
                 DB::statement("ALTER TABLE {$table} DISABLE ROW LEVEL SECURITY");

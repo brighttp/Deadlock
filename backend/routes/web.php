@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\HistoryController;
 use App\Http\Controllers\Admin\LoanController as AdminLoanController;
 use App\Http\Controllers\Admin\MemberController;
+use App\Http\Controllers\Admin\MonitoringController;
 use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Anggota\LoanController as AnggotaLoanController;
 use App\Http\Controllers\Auth\LoginController;
@@ -51,5 +52,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/riwayat', [HistoryController::class, 'index'])->name('riwayat.index');
         Route::get('/riwayat/cetak', [HistoryController::class, 'cetak'])->name('riwayat.cetak');
         Route::get('/riwayat/pdf', [HistoryController::class, 'pdf'])->name('riwayat.pdf');
+
+        Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring');
+        Route::post('/monitoring/pantau', [MonitoringController::class, 'pantau'])->name('monitoring.pantau');
     });
 });
