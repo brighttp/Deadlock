@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Loan;
 use App\Services\LoanService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -30,6 +31,17 @@ class LoanController extends Controller
             return back()->with('error', collect($e->errors())->flatten()->first());
         }
 
-        return back()->with('success', 'Pengembalian diproses. Denda: '.rupiah($loan->fine_amount).'.'); // MSG-16
+        return back()->with('success', 'Pengembalian unit berhasil disetujui. Denda: '.rupiah($loan->fine_amount).'.'); // MSG-16
+    }
+
+    public function tolak(Request $request, Loan $loan, LoanService $service): RedirectResponse
+    {
+        try {
+            $service->tolakPengembalian($loan, $request->input('note'));
+        } catch (ValidationException $e) {
+            return back()->with('error', collect($e->errors())->flatten()->first());
+        }
+
+        return back()->with('success', 'Permintaan pengembalian unit telah ditolak. Status pinjaman tetap aktif.');
     }
 }

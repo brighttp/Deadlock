@@ -59,14 +59,33 @@
                             <td><x-badge :status="ucfirst($unit->status)" /></td>
                             @if ($bisaPinjam)
                                 <td style="text-align:right">
-                                    {{-- Tombol hanya bantuan tampilan; aturan tetap dicek ulang di server. --}}
-                                    <form method="POST" action="{{ route('pinjam', $unit) }}" class="inline-form">
-                                        @csrf
-                                        <button type="submit" class="btn-primary btn-sm"
-                                                @disabled(! $unit->isTersedia() || $sisaKuota <= 0)>
-                                            <i data-lucide="package-plus" width="14" height="14"></i> Pinjam
-                                        </button>
-                                    </form>
+                                    @php
+                                        $bolehPinjam = $unit->isTersedia() && $sisaKuota > 0;
+                                        $tenggat = today()->addDays(config('gudang.lama_pinjam_hari'));
+                                    @endphp
+                                    <button type="button" class="btn-primary btn-sm"
+                                            @disabled(! $bolehPinjam)
+                                            @if ($bolehPinjam) data-modal-open="pinjam-{{ $unit->id }}" @endif>
+                                        <i data-lucide="package-plus" width="14" height="14"></i> Pinjam
+                                    </button>
+
+                                    @if ($bolehPinjam)
+                                        <x-confirm id="pinjam-{{ $unit->id }}" title="Konfirmasi Peminjaman Unit" confirmLabel="Konfirmasi Pinjam"
+                                                   :action="route('pinjam', $unit)">
+                                            <div style="display:flex; flex-direction:column; gap:10px">
+                                                <div>Anda akan mengajukan peminjaman unit berikut:</div>
+                                                <div style="background:rgba(0,0,0,0.25); padding:10px 12px; border-radius:var(--radius-md); border:1px solid var(--border-color); display:flex; flex-direction:column; gap:6px; font-size:13px">
+                                                    <div>Nama Unit: <strong style="color:var(--text-main, #E5E7EB)">{{ $unit->name }}</strong></div>
+                                                    <div>Kode Unit: <strong class="text-mono" style="color:var(--color-accent, #EAB308)">{{ $unit->unit_code }}</strong></div>
+                                                    <div>Kategori: <strong>{{ $unit->categories->pluck('name')->join(', ') ?: '-' }}</strong></div>
+                                                    <div>Waktu Tenggat: <strong style="color:#4ADE80">{{ tanggal($tenggat) }}</strong> <span style="font-size:11.5px; color:var(--text-muted)">({{ config('gudang.lama_pinjam_hari') }} hari)</span></div>
+                                                </div>
+                                                <div style="font-size:12px; color:var(--text-muted); line-height:1.4">
+                                                    Pastikan unit dikembalikan sebelum batas waktu tenggat guna menghindari denda keterlambatan ({{ rupiah(config('gudang.denda_per_hari')) }}/hari).
+                                                </div>
+                                            </div>
+                                        </x-confirm>
+                                    @endif
                                 </td>
                             @endif
                         </tr>

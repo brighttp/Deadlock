@@ -2,9 +2,9 @@
 @php
     $class = match ($status) {
         'Tersedia' => 'badge-success',
-        'Dipinjam' => 'badge-warning',
+        'Dipinjam', 'Menunggu Persetujuan' => 'badge-warning',
         'Aktif', 'Admin' => 'badge-accent',
-        'Terlambat' => 'badge-danger',
+        'Terlambat', 'Pengembalian Ditolak' => 'badge-danger',
         'Survivor' => 'badge-survivor',
         default => 'badge-neutral',
     };

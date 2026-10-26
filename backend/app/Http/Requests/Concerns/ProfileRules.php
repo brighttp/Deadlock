@@ -13,11 +13,6 @@ trait ProfileRules
             'name' => ['required', 'string', 'max:100'],
             'phone' => ['nullable', 'string', 'regex:'.config('gudang.regex_hp')],
             'address' => ['nullable', 'string', 'max:500'],
-            'photo' => [
-                'nullable', 'image',
-                'mimes:'.implode(',', config('gudang.foto_mimes')),
-                'max:'.config('gudang.foto_maks_kb'),
-            ],
         ];
     }
 
@@ -25,8 +20,6 @@ trait ProfileRules
     {
         return [
             'phone.regex' => 'Format nomor HP tidak valid.', // MSG-07
-            'photo.max' => 'Ukuran foto maksimal 2 MB.',
-            'photo.mimes' => 'Foto harus berformat jpg, jpeg, png, atau webp.',
         ];
     }
 

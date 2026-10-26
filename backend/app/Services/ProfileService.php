@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
  */
 class ProfileService
 {
-    public function create(array $data, ?UploadedFile $photo): User
+    public function create(array $data, ?UploadedFile $photo = null): User
     {
         $path = $photo?->store('profiles', 'public');
 
@@ -40,7 +40,7 @@ class ProfileService
         }
     }
 
-    public function update(User $user, array $data, ?UploadedFile $photo): User
+    public function update(User $user, array $data, ?UploadedFile $photo = null): User
     {
         $oldPath = $user->profile?->photo;
         $newPath = $photo?->store('profiles', 'public');

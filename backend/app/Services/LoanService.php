@@ -65,10 +65,69 @@ class LoanService
             $loan->return_date = $returnDate;
             $loan->fine_amount = $loan->hitungDenda($returnDate); // tepat di due_date => 0
             $loan->status = Loan::STATUS_SELESAI;
+            $loan->return_status = null;
+            $loan->return_rejection_note = null;
             $loan->save();
 
             // withTrashed: jaga-jaga, walau unit dipinjam tidak bisa dihapus.
             Unit::withTrashed()->whereKey($loan->unit_id)->update(['status' => Unit::STATUS_TERSEDIA]);
+
+            return $loan;
+        });
+    }
+
+    public function ajukanPengembalian(Loan $loan, User $user): Loan
+    {
+        return DB::transaction(function () use ($loan, $user) {
+            $loan = Loan::whereKey($loan->id)->lockForUpdate()->firstOrFail();
+
+            if ($loan->user_id !== $user->id) {
+                throw ValidationException::withMessages([
+                    'kembalikan' => 'Anda tidak berhak mengajukan pengembalian untuk pinjaman ini.',
+                ]);
+            }
+
+            if ($loan->status !== Loan::STATUS_AKTIF) {
+                throw ValidationException::withMessages([
+                    'kembalikan' => 'Pinjaman ini sudah selesai / dikembalikan.',
+                ]);
+            }
+
+            if ($loan->isMenungguPersetujuan()) {
+                throw ValidationException::withMessages([
+                    'kembalikan' => 'Pengembalian unit ini sudah diajukan dan sedang menunggu persetujuan Admin.',
+                ]);
+            }
+
+            $loan->return_status = Loan::RETURN_DIAJUKAN;
+            $loan->return_requested_at = now();
+            $loan->return_rejection_note = null;
+            $loan->save();
+
+            return $loan;
+        });
+    }
+
+    public function tolakPengembalian(Loan $loan, ?string $note = null): Loan
+    {
+        return DB::transaction(function () use ($loan, $note) {
+            $loan = Loan::whereKey($loan->id)->lockForUpdate()->firstOrFail();
+
+            if ($loan->status !== Loan::STATUS_AKTIF) {
+                throw ValidationException::withMessages([
+                    'tolak' => 'Pinjaman ini sudah tidak aktif.',
+                ]);
+            }
+
+            if (! $loan->isMenungguPersetujuan()) {
+                throw ValidationException::withMessages([
+                    'tolak' => 'Pinjaman ini tidak sedang dalam status pengajuan pengembalian.',
+                ]);
+            }
+
+            $loan->return_status = Loan::RETURN_DITOLAK;
+            $loan->return_rejection_note = trim((string) $note) ?: 'Pengembalian belum dapat disetujui oleh Admin.';
+            $loan->save();
 
             return $loan;
         });

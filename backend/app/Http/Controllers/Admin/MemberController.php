@@ -36,7 +36,7 @@ class MemberController extends Controller
 
     public function store(MemberRequest $request, ProfileService $service): RedirectResponse
     {
-        $service->create($request->safe()->except('photo'), $request->file('photo'));
+        $service->create($request->validated());
 
         return redirect()->route('anggota.index')->with('success', 'Data berhasil disimpan.'); // MSG-19
     }
@@ -52,7 +52,7 @@ class MemberController extends Controller
     {
         $this->pastikanAnggota($member);
 
-        $service->update($member, $request->safe()->except('photo'), $request->file('photo'));
+        $service->update($member, $request->validated());
 
         return redirect()->route('anggota.index')->with('success', 'Data berhasil disimpan.');
     }

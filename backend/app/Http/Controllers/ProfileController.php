@@ -19,7 +19,7 @@ class ProfileController extends Controller
 
     public function update(ProfileRequest $request, ProfileService $service): RedirectResponse
     {
-        $service->update($request->user(), $request->safe()->except('photo'), $request->file('photo'));
+        $service->update($request->user(), $request->validated());
 
         return back()->with('success', 'Profil berhasil diperbarui.'); // MSG-17
     }

@@ -2,7 +2,7 @@
     <div class="page-stack">
         <x-page-header title="Profil Saya" description="Satu akun memiliki tepat satu profil. Anda hanya dapat mengubah profil sendiri." />
 
-        <form method="POST" action="{{ route('profil.update') }}" enctype="multipart/form-data" novalidate class="form-card">
+        <form method="POST" action="{{ route('profil.update') }}" novalidate class="form-card">
             @csrf
             @method('PUT')
             <div class="form-grid">

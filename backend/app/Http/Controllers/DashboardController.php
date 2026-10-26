@@ -24,6 +24,7 @@ class DashboardController extends Controller
                     'anggota' => User::anggota()->count(),
                 ],
                 'terlambat' => Loan::terlambat()->with(['user', 'unit'])->orderBy('due_date')->limit(10)->get(),
+                'pinjamanAktif' => Loan::aktif()->with(['user', 'unit'])->orderBy('due_date')->get(),
             ]);
         }
 

@@ -3,7 +3,7 @@
     <div class="page-stack">
         <x-page-header :title="$editing ? 'Ubah Anggota' : 'Tambah Anggota'" description="Role akun otomatis Anggota." />
 
-        <form method="POST" enctype="multipart/form-data" novalidate class="form-card" style="max-width:760px"
+        <form method="POST" novalidate class="form-card" style="max-width:760px"
               action="{{ $editing ? route('anggota.update', $member) : route('anggota.store') }}">
             @csrf
             @if ($editing) @method('PUT') @endif

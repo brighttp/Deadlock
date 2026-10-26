@@ -7,16 +7,21 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['user_id', 'unit_id', 'loan_date', 'due_date', 'return_date', 'fine_amount', 'status'])]
+#[Fillable(['user_id', 'unit_id', 'loan_date', 'due_date', 'return_date', 'fine_amount', 'status', 'return_status', 'return_requested_at', 'return_rejection_note'])]
 class Loan extends Model
 {
     public const STATUS_AKTIF = 'aktif';
 
     public const STATUS_SELESAI = 'selesai';
 
+    public const RETURN_DIAJUKAN = 'diajukan';
+
+    public const RETURN_DITOLAK = 'ditolak';
+
     protected $attributes = [
         'status' => self::STATUS_AKTIF,
         'fine_amount' => 0,
+        'return_status' => null,
     ];
 
     protected function casts(): array
@@ -25,6 +30,7 @@ class Loan extends Model
             'loan_date' => 'date',
             'due_date' => 'date',
             'return_date' => 'date',
+            'return_requested_at' => 'datetime',
             'fine_amount' => 'integer',
         ];
     }
@@ -45,6 +51,12 @@ class Loan extends Model
         return $query->where('status', self::STATUS_AKTIF);
     }
 
+    // Menunggu persetujuan pengembalian oleh Admin
+    public function scopeMenungguPersetujuan($query)
+    {
+        return $query->aktif()->where('return_status', self::RETURN_DIAJUKAN);
+    }
+
     // Terlambat tidak disimpan di DB: aktif dan due_date sudah lewat (tanggal dari Laravel, bukan CURRENT_DATE).
     public function scopeTerlambat($query)
     {
@@ -54,6 +66,16 @@ class Loan extends Model
     public function isTerlambat(): bool
     {
         return $this->status === self::STATUS_AKTIF && $this->due_date->lt(today());
+    }
+
+    public function isMenungguPersetujuan(): bool
+    {
+        return $this->status === self::STATUS_AKTIF && $this->return_status === self::RETURN_DIAJUKAN;
+    }
+
+    public function isPengembalianDitolak(): bool
+    {
+        return $this->status === self::STATUS_AKTIF && $this->return_status === self::RETURN_DITOLAK;
     }
 
     // Hari terlambat per tanggal acuan (default hari ini); 0 jika dikembalikan tepat/sebelum jatuh tempo.
@@ -72,10 +94,22 @@ class Loan extends Model
     // Label kapital hanya untuk tampilan.
     public function statusLabel(): string
     {
-        return match (true) {
-            $this->isTerlambat() => 'Terlambat',
-            $this->status === self::STATUS_AKTIF => 'Aktif',
-            default => 'Selesai',
-        };
+        if ($this->status === self::STATUS_SELESAI) {
+            return 'Selesai';
+        }
+
+        if ($this->isMenungguPersetujuan()) {
+            return 'Menunggu Persetujuan';
+        }
+
+        if ($this->isPengembalianDitolak()) {
+            return 'Pengembalian Ditolak';
+        }
+
+        if ($this->isTerlambat()) {
+            return 'Terlambat';
+        }
+
+        return 'Aktif';
     }
 }

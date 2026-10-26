@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:anggota')->group(function () {
         Route::post('/katalog/{unit}/pinjam', [AnggotaLoanController::class, 'store'])->name('pinjam');
         Route::get('/pinjaman-saya', [AnggotaLoanController::class, 'index'])->name('pinjaman-saya');
+        Route::post('/pinjaman-saya/{loan}/kembalikan', [AnggotaLoanController::class, 'ajukanKembali'])->name('pinjaman-saya.kembalikan');
     });
 
     Route::middleware('role:admin')->group(function () {
@@ -47,6 +48,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/pinjaman', [AdminLoanController::class, 'index'])->name('pinjaman.index');
         Route::post('/pinjaman/{loan}/kembali', [AdminLoanController::class, 'kembali'])->name('pinjaman.kembali');
+        Route::post('/pinjaman/{loan}/tolak', [AdminLoanController::class, 'tolak'])->name('pinjaman.tolak');
 
         Route::get('/riwayat', [HistoryController::class, 'index'])->name('riwayat.index');
         Route::get('/riwayat/cetak', [HistoryController::class, 'cetak'])->name('riwayat.cetak');

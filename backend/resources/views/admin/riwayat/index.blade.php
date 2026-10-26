@@ -1,6 +1,6 @@
 <x-layouts.app title="Rekam Riwayat Peminjaman Unit">
     <div class="page-stack">
-        <x-page-header title="Riwayat Peminjaman" description="Filter riwayat per anggota dan rentang tanggal pinjam, lalu cetak atau unduh PDF." />
+        <x-page-header title="Riwayat Peminjaman" description="Filter riwayat per anggota dan rentang tanggal pinjam, lalu unduh PDF." />
 
         <form method="GET" action="{{ route('riwayat.index') }}" novalidate class="form-card">
             <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))">
@@ -24,7 +24,6 @@
             <div class="form-actions">
                 <a href="{{ route('riwayat.index') }}" class="btn-secondary">Reset</a>
                 <button type="submit" class="btn-primary"><i data-lucide="filter" width="16" height="16"></i> Tampilkan</button>
-                <a href="{{ route('riwayat.cetak', $filter) }}" target="_blank" class="btn-secondary"><i data-lucide="printer" width="16" height="16"></i> Cetak</a>
                 <a href="{{ route('riwayat.pdf', $filter) }}" class="btn-secondary"><i data-lucide="file-down" width="16" height="16"></i> Unduh PDF</a>
             </div>
         </form>
