@@ -124,3 +124,7 @@ a.btn-primary, a.btn-secondary, a.btn-danger { text-decoration: none; display: i
 
 /* Halaman mode terbatas (database tidak dapat dihubungi) */
 .mode-terbatas { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+
+/* Tautan Daftar/Masuk di halaman auth: warna aksen supaya terbaca di latar gelap */
+.auth-terminal-card .form-hint a { color: var(--color-accent); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.auth-terminal-card .form-hint a:hover { color: var(--color-accent-hover); }

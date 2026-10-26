@@ -8,15 +8,20 @@ use App\Http\Controllers\Admin\MonitoringController;
 use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Anggota\LoanController as AnggotaLoanController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-// Tidak ada registrasi publik: akun anggota dibuat Admin.
+// Registrasi mandiri (revisi asesor): akun yang dibuat selalu ber-role anggota.
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:10,1');
+
+    // Lebih ketat dari login supaya tidak bisa dipakai membuat akun massal.
+    Route::get('/daftar', [RegisterController::class, 'create'])->name('register');
+    Route::post('/daftar', [RegisterController::class, 'store'])->middleware('throttle:5,1');
 });
 
 Route::middleware('auth')->group(function () {
