@@ -15,7 +15,7 @@
 
                 <x-profile-fields :user="$user" />
 
-                <x-field label="Mata Uang Tampilan" name="currency" hint="Nominal denda ditampilkan dengan kurs harian Bank Sentral Eropa. Cetak dan PDF tetap Rupiah.">
+                <x-field label="Mata Uang Tampilan" name="currency" hint="Nominal denda ditampilkan dengan kurs harian dari API Frankfurter. Cetak dan PDF tetap Rupiah.">
                     <select id="currency" name="currency" class="input-control @error('currency') input-error @enderror">
                         @foreach (config('gudang.mata_uang.daftar') as $kode => $info)
                             <option value="{{ $kode }}" @selected(old('currency', $user->currency ?? 'IDR') === $kode)>{{ $kode }} - {{ $info['nama'] }}</option>

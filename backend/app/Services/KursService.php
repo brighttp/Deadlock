@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Kurs Rupiah ke mata uang lain dari API Frankfurter (kurs referensi ECB, diperbarui tiap hari kerja).
+ * Kurs Rupiah ke mata uang lain dari API Frankfurter v2 (kurs harian gabungan bank sentral dan sumber resmi).
  * Graceful failure: API gagal => kurs terakhir yang berhasil; belum pernah berhasil => tampil Rupiah.
  */
 class KursService
@@ -82,7 +82,7 @@ class KursService
                 ->timeout($timeout)
                 ->get(config('gudang.mata_uang.api_url'), [
                     'base' => 'IDR',
-                    'symbols' => implode(',', $tujuan),
+                    'quotes' => implode(',', $tujuan),
                 ]);
         } catch (ConnectionException $e) {
             Log::warning('API kurs tidak dapat dihubungi.', ['pesan' => $e->getMessage()]);
@@ -90,16 +90,19 @@ class KursService
             return null;
         }
 
-        $rates = $respons->json('rates');
+        // v2 membalas daftar baris: [{"date": "...", "base": "IDR", "quote": "USD", "rate": 0.000055}, ...]
+        $rates = collect($respons->successful() && array_is_list((array) $respons->json()) ? $respons->json() : [])
+            ->filter(fn ($baris) => is_array($baris) && ($baris['base'] ?? null) === 'IDR'
+                && in_array($baris['quote'] ?? null, $tujuan, true) && is_numeric($baris['rate'] ?? null))
+            ->mapWithKeys(fn ($baris) => [$baris['quote'] => (float) $baris['rate']])
+            ->all();
 
-        if ($respons->failed() || ! is_array($rates)) {
+        if ($rates === []) {
             Log::warning('API kurs mengembalikan respons tidak valid.', ['status' => $respons->status()]);
 
             return null;
         }
 
-        $rates = array_intersect_key($rates, array_flip($tujuan));
-
-        return ['IDR' => 1.0] + array_map('floatval', $rates);
+        return ['IDR' => 1.0] + $rates;
     }
 }

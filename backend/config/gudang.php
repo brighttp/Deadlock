@@ -51,11 +51,12 @@ return [
 
     /*
     | Mata uang tampilan (revisi asesor). Data tetap disimpan dalam Rupiah;
-    | konversi hanya saat ditampilkan, memakai kurs harian Bank Sentral Eropa dari API Frankfurter.
+    | konversi hanya saat ditampilkan, memakai kurs harian dari API Frankfurter v2
+    | (gabungan bank sentral dan sumber resmi; v1 sudah deprecated sejak Mei 2026).
     */
     'mata_uang' => [
         'default' => 'IDR',
-        'api_url' => env('KURS_API_URL', 'https://api.frankfurter.dev/v1/latest'),
+        'api_url' => env('KURS_API_URL', 'https://api.frankfurter.dev/v2/rates'),
         'cache_menit' => (int) env('KURS_CACHE_MENIT', 60),
         'timeout_detik' => 3,
         'daftar' => [

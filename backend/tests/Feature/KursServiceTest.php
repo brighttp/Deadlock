@@ -18,11 +18,12 @@ class KursServiceTest extends TestCase
 {
     use RefreshDatabase;
 
+    // Bentuk respons Frankfurter v2 /v2/rates: satu baris per pasangan mata uang.
     private const KURS_PALSU = [
-        'amount' => 1.0,
-        'base' => 'IDR',
-        'date' => '2026-10-23',
-        'rates' => ['USD' => 0.00006, 'EUR' => 0.000055, 'SGD' => 0.00008, 'JPY' => 0.0092],
+        ['date' => '2026-10-27', 'base' => 'IDR', 'quote' => 'EUR', 'rate' => 0.000055],
+        ['date' => '2026-10-27', 'base' => 'IDR', 'quote' => 'JPY', 'rate' => 0.0092],
+        ['date' => '2026-10-27', 'base' => 'IDR', 'quote' => 'SGD', 'rate' => 0.00008],
+        ['date' => '2026-10-27', 'base' => 'IDR', 'quote' => 'USD', 'rate' => 0.00006],
     ];
 
     protected function setUp(): void
@@ -41,7 +42,8 @@ class KursServiceTest extends TestCase
         $this->assertSame('$0,90', $kurs->format(15000, 'USD'));
         $this->assertSame('¥138', $kurs->format(15000, 'JPY'));
 
-        Http::assertSent(fn ($request) => $request['base'] === 'IDR' && $request['symbols'] === 'USD,EUR,SGD,JPY');
+        Http::assertSent(fn ($request) => str_starts_with($request->url(), 'https://api.frankfurter.dev/v2/rates')
+            && $request['base'] === 'IDR' && $request['quotes'] === 'USD,EUR,SGD,JPY');
     }
 
     public function test_kurs_disimpan_di_cache_sehingga_api_dipanggil_sekali(): void
@@ -65,6 +67,21 @@ class KursServiceTest extends TestCase
         $this->travel(61)->minutes(); // cache kurs kedaluwarsa, API dipanggil lagi dan gagal
 
         $this->assertEqualsWithDelta(0.9, (new KursService)->konversi(15000, 'USD'), 0.000001);
+        Http::assertSentCount(2);
+    }
+
+    public function test_respons_api_tidak_valid_dianggap_gagal(): void
+    {
+        // Bentuk lama v1 (objek "rates") dan respons error v2 sama-sama tidak dipakai.
+        Http::fakeSequence('api.frankfurter.dev/*')
+            ->push(['base' => 'IDR', 'rates' => ['USD' => 0.00006]])
+            ->push(['status' => 422, 'message' => 'invalid currency: ABC'], 422);
+
+        $this->assertSame(rupiah(15000), (new KursService)->format(15000, 'USD'));
+
+        $this->travel(6)->minutes(); // lewat jeda coba ulang 5 menit
+
+        $this->assertSame(rupiah(15000), (new KursService)->format(15000, 'USD'));
         Http::assertSentCount(2);
     }
 
